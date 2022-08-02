@@ -12,15 +12,14 @@ def getFiles(path):
 def gen_all_file_strings(path, files, headers, output):
     for file in files:
         package = file[:file.find("_")]
-        f = open(path + file)
-        for line in f:
-            idx = line.strip().find(keyword)
-            if idx >= 0 and line.strip()[-1] != "/":
-                headers.write(package + ":" + line[idx + len(keyword):])
-                output.write(package + ":" + line[idx-1:])
-            elif line.strip()[-1] != "/":
-                output.write(package + ":" + line[line.find("/"):])
-        f.close()
+        with open(path + file) as f:
+            for line in f:
+                idx = line.strip().find(keyword)
+                if idx >= 0 and line.strip()[-1] != "/":
+                    headers.write(f"{package}:{line[idx + len(keyword):]}")
+                    output.write(f"{package}:{line[idx-1:]}")
+                elif line.strip()[-1] != "/":
+                    output.write(f"{package}:" + line[line.find("/"):])
 
 def main(path):
     try:
@@ -29,10 +28,9 @@ def main(path):
         print("Path already exists, continuing...")
 
     try:
-        headers = open("scripts/list_files/VCPKGHeadersDatabase.txt", mode='w')
-        output = open("scripts/list_files/VCPKGDatabase.txt", mode='w')
-        gen_all_file_strings(path, getFiles(path), headers, output)
-        headers.close()
+        with open("scripts/list_files/VCPKGHeadersDatabase.txt", mode='w') as headers:
+            output = open("scripts/list_files/VCPKGDatabase.txt", mode='w')
+            gen_all_file_strings(path, getFiles(path), headers, output)
         output.close()
     except e:
         print("Failed to generate file lists")

@@ -23,11 +23,12 @@ with open(sys.argv[1], "r") as f_in:
                         parts = [t[16:] for t in tokens if t.startswith("-Wl,-force_load,")]
                     else:
                         m = p_cd.match(env[0])
-                        f_out.write(m.group(1) + "\n")
+                        f_out.write(m[1] + "\n")
                         tmp = [t[16:] for t in tokens if t.startswith("-Wl,-force_load,")]
                         old = set(parts)
                         parts += [t for t in tmp if t not in old]
-                        line = f"libtool -static -o {m1.group(1).replace('.dylib', '.a')} {' '.join(parts)}\n"
+                        line = f"libtool -static -o {m1[1].replace('.dylib', '.a')} {' '.join(parts)}\n"
+
                         f_out.write(line)
                         break
                 elif m2 and len(env) > 6:
@@ -36,11 +37,12 @@ with open(sys.argv[1], "r") as f_in:
                         parts = [t[16:] for t in tokens if t.startswith("-Wl,-force_load,")]
                     else:
                         m = p_cd.match(env[0])
-                        f_out.write(m.group(1) + "\n")
+                        f_out.write(m[1] + "\n")
                         tmp = [t[16:] for t in tokens if t.startswith("-Wl,-force_load,")]
                         old = set(parts)
                         parts += [t for t in tmp if t not in old]
-                        line = f"libtool -static -o {m2.group(1).replace('_framework', lib_suffix).replace('.dylib', '.a')} {' '.join(parts)}\n"
+                        line = f"libtool -static -o {m2[1].replace('_framework', lib_suffix).replace('.dylib', '.a')} {' '.join(parts)}\n"
+
                         f_out.write(line)
                         break
                 else:
